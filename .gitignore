@@ -1,0 +1,20 @@
+# Segredos e credenciais
+email_config.json
+*.env
+# Dados reais do dia e saídas geradas
+estado/
+saida/
+dia.py
+data.py
+report_data.py
+drive.json
+# Fontes licenciadas (Monument Extended): copiar manualmente para ./fontes
+fontes/
+# Ponte do WhatsApp: banco de mensagens, sessão, lista de grupos e contatos
+ponte-whatsapp/**/store/
+ponte-whatsapp/**/allowed_chats.txt
+ponte-whatsapp/**/names.json
+*.exe
+*.log
+__pycache__/
+*.pyc

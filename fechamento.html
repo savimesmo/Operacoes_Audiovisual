@@ -1,0 +1,268 @@
+<title>Fechamento __DIA__</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap">
+<style>
+@font-face{font-family:"Monument Extended";font-weight:800;src:url(data:font/otf;base64,__F800__) format("opentype");font-display:swap}
+/* Layout: cabeçalho, quatro números de resumo, quatro blocos de lista; mesma linguagem da pauta do dia. */
+:root{
+  --bg:#0a0a0a; --surface:#131313; --surface-2:#1b1b1b; --line:#2a2a2a; --line-2:#3a3a3a;
+  --ink:#f5f5f5; --ink-2:#c4c4c4; --mute:#8d8d8d; --red:#e11121; --red-soft:#3a0d11; --ok:#2fcf7f; --ok-soft:#0f2a1d;
+  --display:"Monument Extended","Archivo",system-ui,sans-serif; --body:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:400 15px/1.5 var(--body);padding-inline:16px;padding-block:0 64px}
+.wrap{max-width:980px;margin:0 auto}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px;border-radius:6px}
+header.top{padding-block:32px 22px;display:grid;gap:14px}
+.kicker{font:600 12px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+h1{margin:0;font:800 clamp(28px,6vw,46px)/1.05 var(--display);text-wrap:balance}
+h1 span{color:var(--red)}
+.lead{margin:0;max-width:64ch;color:var(--ink-2)}
+.stamp{font-size:13px;color:var(--mute)}
+.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-block:8px 4px}
+.sc{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;display:grid;gap:6px;min-width:0;text-align:left;color:inherit;font:inherit;cursor:pointer;transition:border-color .15s}
+.sc:hover{border-color:var(--ink-2)}
+.sc .aj{font-size:13px;color:var(--ink);font-weight:600}
+.sc small{font-size:12px;color:var(--mute);letter-spacing:.04em}
+section.grp{scroll-margin-top:16px}
+.sc b{font:800 34px/1 var(--display);font-variant-numeric:tabular-nums}
+.sc span{font-size:13px;color:var(--ink-2)}
+.sc.alert{border-color:var(--red);background:var(--red-soft)}
+.ed{display:flex;flex-wrap:wrap;gap:8px;margin-block:14px 0}
+.pill{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line-2);border-radius:99px;padding:6px 12px;font-size:13px;color:var(--ink-2)}
+button.pill{background:transparent;font:inherit;font-size:13px;cursor:pointer;color:var(--ink-2)}
+button.pill:hover{border-color:var(--ink-2)}
+button.pill[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#0a0a0a}
+button.pill[aria-pressed=true] b{color:#0a0a0a}
+.pill b{color:var(--ink);font-variant-numeric:tabular-nums}
+section.grp{margin-block:40px 0}
+.grp-h{display:grid;gap:6px;padding-bottom:14px;border-bottom:1px solid var(--line-2)}
+.grp-t{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.grp-n{font:800 13px/1 var(--display);color:var(--red);min-width:1.4em}
+.grp-t h2{margin:0;font:800 clamp(16px,3.2vw,21px)/1.2 var(--display);text-wrap:balance;flex:1 1 260px}
+.grp-c{font:600 13px/1 var(--body);color:var(--mute);font-variant-numeric:tabular-nums}
+.grp-d{margin:0;color:var(--mute);font-size:14px;max-width:70ch;padding-left:calc(1.4em + 14px)}
+.sub{margin:22px 0 2px;font:600 12px/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+ul.rows{list-style:none;margin:0;padding:0}
+.row{display:grid;gap:6px;padding-block:16px;border-bottom:1px solid var(--line);min-width:0}
+.l1{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.cli{font:600 12px/1 var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2)}
+.tag{font:500 12px/1 var(--body);border:1px solid var(--line-2);border-radius:99px;padding:5px 9px;color:var(--ink-2);white-space:nowrap}
+.tag.late{border-color:var(--red);color:#ff6b75;background:var(--red-soft)}
+.tag.prio{background:var(--red);border-color:var(--red);color:#fff;font-weight:700;letter-spacing:.06em}
+.tag.mk{border-style:dashed;color:var(--ink);font-weight:600}
+.tag.mk.hot{background:var(--red);border:1px solid var(--red);color:#fff}
+.ajb{border:1px solid var(--ink-2);background:var(--surface-2);border-radius:12px;padding:10px 12px;display:grid;gap:8px}
+.ajb.hot{border-color:var(--red);background:var(--red-soft)}
+.ajh b{font:700 13px/1.2 var(--body);letter-spacing:.04em;text-transform:uppercase}
+.ajb.hot .ajh b{color:#ff6b75}
+.ajl{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.ajl li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;font-size:13px;color:var(--ink-2)}
+.ajl .txt{min-width:0;overflow-wrap:anywhere}
+.ajl .txt b{color:var(--ink)}
+.tipo{font:600 11px/1 var(--body);letter-spacing:.06em;text-transform:uppercase;border-radius:99px;padding:5px 8px;border:1px solid var(--line-2);color:var(--ink);white-space:nowrap}
+.tipo.cli{border-color:var(--ink-2)}
+.tipo.edi{background:var(--ink);color:#0a0a0a;border-color:var(--ink)}
+.tipo.art{border-style:dashed}
+.tipo.brf{background:var(--surface);border-color:var(--ink);border-style:double;border-width:3px}
+.ajl .br{margin-top:2px;font-size:12px;color:var(--mute)}
+.ajl .br b{color:var(--ink-2);font-weight:600}
+.row.ex{grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:start}
+.bd{min-width:0;display:grid;gap:6px}
+.chk{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;flex:none;margin-top:1px}
+.chk.ok{background:var(--ok);box-shadow:0 0 0 5px var(--ok-soft)}
+.chk.ok::after{content:"";width:8px;height:14px;border:solid #07130d;border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.chk.part{border:2px dashed var(--ink-2)}
+.chk.part::after{content:"";width:10px;height:3px;border-radius:2px;background:var(--ink-2)}
+.tag.done{color:var(--ok);border-color:var(--ok)}
+.ttl{margin:0;font:600 16px/1.35 var(--body);overflow-wrap:anywhere}
+.ttl a{text-decoration:none}
+.ttl a:hover{text-decoration:underline;text-underline-offset:3px}
+.l3{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:14px;color:var(--ink-2)}
+.l3 b{color:var(--ink);font-weight:600}
+.ev{font-size:13px;color:var(--ink-2);border-left:2px solid var(--line-2);padding-left:10px}
+.why{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px;color:var(--ink-2)}
+select.field{background:var(--surface);color:var(--ink);border:1px solid var(--line-2);border-radius:12px;padding:7px 10px;font:400 13px/1.2 var(--body);min-width:0;max-width:100%}
+.note{margin:0;font-size:13px;color:var(--mute);max-width:72ch}
+.sync{font-size:12px;color:var(--mute)}
+footer{margin-top:48px;color:var(--mute);font-size:13px;max-width:72ch;display:grid;gap:8px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media (max-width:560px){.grp-d{padding-left:0}}
+@page{size:A4;margin:9mm}
+@media print{*{-webkit-print-color-adjust:exact;print-color-adjust:exact}.row,.sc,.ajb,.lc{break-inside:avoid}section.grp{break-inside:auto}.sc small,.pill.clear{display:none}body{padding-inline:0}}
+</style>
+
+<div class="wrap">
+<header class="top">
+  <div class="kicker">Vanguarda · Produção de vídeo e criação</div>
+  <h1>Fechamento de <span>__DIA_EXT__</span></h1>
+  <p class="lead">O que a edição executou hoje, o que foi reprogramado para __PROX__, o que foi sinalizado como prioridade e não andou, e o que continua bloqueado.</p>
+  <div class="stamp">Lido no iClips em __LIDO__. Pedidos lidos no WhatsApp (JOBS Accounts) e no Google Chat.</div>
+  <div class="sum" id="sum"></div>
+  <div class="ed" id="ed"></div>
+</header>
+<main id="main"></main>
+<footer>
+  <span id="rec"></span>
+  <span>Reprogramado significa que a etapa de vídeo ficou com prazo em __PROX__ e teve a data alterada hoje, conforme o histórico do job. O iClips não guarda a data anterior, então o relatório mostra quem alterou e a que horas. O motivo vem preenchido como limite de pauta e pode ser trocado em cada job.</span>
+  <span>Ajustes e refações contam as etapas com esse nome a partir da primeira etapa de vídeo do job. O marcador de mais de uma etapa de edição vale para edição ou animação repetida, sem contar claquete nem arquivamento.</span>
+  <span>O tipo de cada ajuste cruza o pedido com o briefing do job. Se o briefing já indicava, é erro de edição. Se não indicava, é briefing sem as informações solicitadas. Pedidos vindos do cliente ficam como alteração do cliente.</span>
+</footer>
+</div>
+
+<script>
+var EXEC=__EXEC__, SUP=__SUP__, REC=__REC__, MOVED=__MOVED__, ROWS=__ROWS__, RES=__RES__, PEDIDO=__PEDIDO__, FLAGS=__FLAGS__, DET=__DET__;
+var MOTIVOS=["Limite de pauta","Etapa anterior bloqueando","Aguardando aprovação","Ajuste do cliente","Outro motivo"];
+var motivos={};var db=null;var fp="";
+function isRec(r){return /FDS Fraldas|Fitness/i.test(r[2]);}
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e;}
+function nice(s){s=(s||"").toLowerCase();return s.charAt(0).toUpperCase()+s.slice(1);}
+function url(id){return "https://app.iclips.com.br/vanguarda/JobPeca/Atividade/"+id;}
+function title(p,id,t){var x=el("p","ttl"),a=el("a",null,t);a.href=url(id);a.target="_blank";a.rel="noopener";x.appendChild(a);p.appendChild(x);}
+function head(n,t,c,d){var h=el("div","grp-h"),r=el("div","grp-t");r.appendChild(el("span","grp-n",n));r.appendChild(el("h2",null,t));r.appendChild(el("span","grp-c",c));h.appendChild(r);h.appendChild(el("p","grp-d",d));return h;}
+function line(k,v){var s=el("span");s.appendChild(document.createTextNode(k+": "));s.appendChild(el("b",null,v));return s;}
+
+function execRow(r){
+  var li=el("li","row ex"),bd=el("div","bd"),l1=el("div","l1");
+  l1.appendChild(el("span","cli",r[1]));
+  l1.appendChild(el("span","tag "+(r[5]==="done"?"done":"late"),r[5]==="done"?"Executado":"Parcial"));
+  var f=FLAGS[r[0]]||[0,0,1];
+  var hot=(f[0]+f[1])>2;
+  if(f[0]) l1.appendChild(el("span","tag mk"+(f[0]>2?" hot":""),"Ajuste"+(f[0]>1?" ×"+f[0]:"")));
+  if(f[1]) l1.appendChild(el("span","tag mk"+(f[1]>2?" hot":""),"Refação"+(f[1]>1?" ×"+f[1]:"")));
+  if(f[2]>1) l1.appendChild(el("span","tag mk","Mais de uma etapa de edição ("+f[2]+")"));
+  bd.appendChild(l1);title(bd,r[0],r[2]);
+  var l3=el("div","l3");l3.appendChild(line("Quem",r[3]));l3.appendChild(line("Horário",r[4]));l3.appendChild(line("Agora",r[6]));bd.appendChild(l3);
+  var dt=DET[r[0]];
+  if((f[0]+f[1])>0||f[2]>1){
+    var bx=el("div","ajb"+(hot?" hot":""));
+    var hd=el("div","ajh");hd.appendChild(el("b",null,(f[0]+f[1])>0?((f[0]+f[1])+" "+((f[0]+f[1])===1?"ajuste ou refação":"ajustes e refações")+(hot?" · acima de 2, triar":"")):"Mais de uma etapa de edição"));bx.appendChild(hd);
+    if(dt&&dt.length){var ul=el("ul","ajl");dt.forEach(function(d){var it=el("li");it.appendChild(el("span","tipo "+d.c,d.tipo));var tx=el("span","txt");tx.appendChild(el("b",null,d.quem));tx.appendChild(document.createTextNode(" · "+d.q+(d.o?": "+d.o:"")));if(d.b){var bb=el("div","br");bb.appendChild(el("b",null,"Briefing: "));bb.appendChild(document.createTextNode(d.b));tx.appendChild(bb);}it.appendChild(tx);ul.appendChild(it);});bx.appendChild(ul);}
+    else bx.appendChild(el("p","note","Sem comentários registrados no job."));
+    bd.appendChild(bx);
+  }
+  var ck=el("i","chk "+(r[5]==="done"?"ok":"part"));ck.setAttribute("role","img");ck.setAttribute("aria-label",r[5]==="done"?"Executado":"Parcial");
+  li.appendChild(ck);li.appendChild(bd);
+  return li;
+}
+function flagTags(l1,id){
+  var f=FLAGS[id]||[0,0,1];
+  if(f[0]) l1.appendChild(el("span","tag mk"+(f[0]>2?" hot":""),"Ajuste"+(f[0]>1?" ×"+f[0]:"")));
+  if(f[1]) l1.appendChild(el("span","tag mk"+(f[1]>2?" hot":""),"Refação"+(f[1]>1?" ×"+f[1]:"")));
+  if(f[2]>1) l1.appendChild(el("span","tag mk","Mais de uma etapa de edição ("+f[2]+")"));
+}
+function ajBox(id){
+  var f=FLAGS[id]||[0,0,1],n=f[0]+f[1];
+  if(!(n>0||f[2]>1)) return null;
+  var hot=n>2,dt=DET[id];
+  var bx=el("div","ajb"+(hot?" hot":"")),hd=el("div","ajh");
+  hd.appendChild(el("b",null,n>0?(n+" "+(n===1?"ajuste ou refação":"ajustes e refações")+(hot?" · acima de 2, triar":"")):"Mais de uma etapa de edição"));bx.appendChild(hd);
+  if(dt&&dt.length){var ul=el("ul","ajl");dt.forEach(function(d){var it=el("li");it.appendChild(el("span","tipo "+d.c,d.tipo));var tx=el("span","txt");tx.appendChild(el("b",null,d.quem));tx.appendChild(document.createTextNode(" · "+d.q+(d.o?": "+d.o:"")));if(d.b){var bb=el("div","br");bb.appendChild(el("b",null,"Briefing: "));bb.appendChild(document.createTextNode(d.b));tx.appendChild(bb);}it.appendChild(tx);ul.appendChild(it);});bx.appendChild(ul);}
+  else bx.appendChild(el("p","note","Sem comentários registrados no job."));
+  return bx;
+}
+function setMotivo(id,v){
+  motivos[id]=v;
+  if(db){db.doc("motivos/"+id).set({v:v,at:Date.now()}).catch(function(){});}
+  else{try{localStorage.setItem("fech-14-10-"+id,v);}catch(e){}}
+}
+function movedRow(r){
+  var li=el("li","row"),l1=el("div","l1");
+  l1.appendChild(el("span","cli",r[2]));
+  l1.appendChild(el("span","tag late","Reprogramado para __PROX__"));
+  if(r[7]) l1.appendChild(el("span","tag prio","SOLICITADA PRIORIDADE"));
+  flagTags(l1,r[1]);
+  li.appendChild(l1);title(li,r[1],r[3]);
+  var l3=el("div","l3");l3.appendChild(line("Etapa",nice(r[4])));l3.appendChild(line("Responsável",r[5]==="TRÁFEGO"?"Tráfego":r[5]));l3.appendChild(line("Prazo",r[6]));li.appendChild(l3);
+  if(MOVED[r[1]]) li.appendChild(el("div","ev",MOVED[r[1]]));
+  var abx=ajBox(r[1]);if(abx) li.appendChild(abx);
+  var w=el("div","why");w.appendChild(document.createTextNode("Motivo:"));
+  var s=el("select","field");s.id="m"+r[1];s.setAttribute("aria-label","Motivo");
+  MOTIVOS.forEach(function(m){var o=el("option",null,m);o.value=m;s.appendChild(o);});
+  s.value=motivos[r[1]]||MOTIVOS[0];
+  s.addEventListener("change",function(){setMotivo(r[1],s.value);});
+  w.appendChild(s);li.appendChild(w);return li;
+}
+function simpleRow(r,extra,tagTxt,tagCls){
+  var li=el("li","row"),l1=el("div","l1");
+  l1.appendChild(el("span","cli",r[2]));
+  if(tagTxt) l1.appendChild(el("span","tag "+(tagCls||""),tagTxt));
+  if(r[7]&&PEDIDO[r[7]]) l1.appendChild(el("span","tag prio","SOLICITADA PRIORIDADE"));
+  li.appendChild(l1);title(li,r[1],r[3]);
+  var l3=el("div","l3");l3.appendChild(line("Etapa",nice(r[4])));l3.appendChild(line("Responsável",r[5]==="TRÁFEGO"?"Tráfego":r[5]));l3.appendChild(line("Prazo",r[6]||"sem prazo"));li.appendChild(l3);
+  if(extra) li.appendChild(el("div","ev",extra));return li;
+}
+function section(n,t,d,items,sub){
+  var s=el("section","grp");s.id="sec-"+n;s.appendChild(head(n,t,items.length+" job"+(items.length===1?"":"s"),d));
+  var ul=el("ul","rows");items.forEach(function(x){ul.appendChild(x);});s.appendChild(ul);return s;
+}
+function render(){
+  var main=document.getElementById("main");main.textContent="";
+  var ALL=[],seen={};EXEC.concat(SUP).forEach(function(r){if(!seen[r[0]]){seen[r[0]]=1;ALL.push(r);}});var done=ALL.filter(function(r){return r[5]==="done";}).length;
+  // 1 executado
+  var s1=el("section","grp");s1.id="sec-1";
+  s1.appendChild(head("1","Executado hoje"+(fp?" por "+fp.split(" ")[0]:""),(fp?ALL.filter(function(r){return r[3].indexOf(fp)>=0;}).length:ALL.length)+" jobs","Jobs de vídeo trabalhados pelos três editores e pela supervisão. Parcial quer dizer que a etapa de vídeo ainda tem um ajuste aberto."));
+  ["Hudson Soares","Guilherme Benevides","Vinicius Alves"].forEach(function(n){
+    if(fp&&fp!==n) return;
+    var list=EXEC.filter(function(r){return fp?r[3].indexOf(n)>=0:r[3].indexOf(n)===0;});
+    var sr=list.filter(function(r){return isRec(r);});
+    s1.appendChild(el("div","sub",n+" · "+list.length+(sr.length?" · "+sr.length+" recorrentes de Santo Remédio":"")));
+    if(sr.length) s1.appendChild(el("p","note","Recorrentes de Santo Remédio ("+sr.length+"): "+sr.map(function(r){return r[2].replace(" · FDS Fraldas "," ");}).join("; ")+"."));
+    var ul=el("ul","rows");list.forEach(function(r){ul.appendChild(execRow(r));});s1.appendChild(ul);
+  });
+  if(!fp||fp==="Diana Savi"){
+    s1.appendChild(el("div","sub","Diana Savi · supervisão, fora do cálculo de capacidade · "+SUP.length));
+    var ul=el("ul","rows");SUP.forEach(function(r){ul.appendChild(execRow(r));});s1.appendChild(ul);
+  }
+  main.appendChild(s1);
+  // 2 reprogramado
+  var mv=ROWS.filter(function(r){return MOVED[r[1]];});
+  main.appendChild(section("2","Não executado e reprogramado para __PROX__","Etapa de vídeo com editor definido que não saiu hoje e foi para a pauta de amanhã.",mv.map(movedRow)));
+  // 3 sinalizado e parado
+  var st=ROWS.filter(function(r){return r[7]&&!MOVED[r[1]]&&r[0]===1;}).map(function(r){return simpleRow(r,"Pedido de prioridade registrado hoje e nenhuma alteração no job depois do pedido.","Sem movimentação","late");});
+  main.appendChild(section("3","Sinalizado como prioridade e sem sair da pauta nem ser movimentado",st.length?"Pedido de prioridade feito hoje, etapa ainda aberta e nenhuma alteração no job depois do pedido.":"Nenhum job sinalizado como prioridade ficou parado. Os pedidos de hoje foram atendidos com reprogramação ou reatribuição do job.",st));
+  // 4 bloqueado
+  var bl=ROWS.filter(function(r){return !MOVED[r[1]];});
+  var items=bl.map(function(r){
+    var ex=RES[r[1]]?RES[r[1]]:"";
+    var tag=r[0]===3?"Aprovação interna parada":(r[0]===4?"Etapa anterior ao vídeo":"Sem responsável");
+    return simpleRow(r,ex,tag,r[0]===3?"late":"");
+  });
+  main.appendChild(section("4","Ainda bloqueado","Jobs de vídeo que esperam uma etapa anterior, uma aprovação ou um responsável. Quando há editor já reservado, aparece abaixo do título.",items));
+  // resumo
+  var sm=document.getElementById("sum");sm.textContent="";
+  [[done+" de "+ALL.length,"Executados no dia, editores e supervisão","","sec-1"],[String(mv.length),"Reprogramados para __PROX__","","sec-2"],[String(st.length),"Sinalizados sem movimentação",st.length?"alert":"","sec-3"],[String(items.length),"Ainda bloqueados","","sec-4"]].forEach(function(x){
+    var c=el("button","sc "+x[2]);c.type="button";c.setAttribute("aria-label",x[1]+": ir para a seção");
+    c.appendChild(el("b",null,x[0]));c.appendChild(el("span",null,x[1]));
+    if(x[3]==="sec-1"){var na=0,nr=0;ALL.forEach(function(r){var f=FLAGS[r[0]]||[0,0,1];na+=f[0];nr+=f[1];});c.appendChild(el("span","aj",na+" ajuste"+(na===1?"":"s")+" · "+nr+" refaç"+(nr===1?"ão":"ões")));}
+    c.appendChild(el("small",null,"Ver lista"));
+    c.addEventListener("click",function(){var t=document.getElementById(x[3]);if(t){var rm=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;t.scrollIntoView({behavior:rm?"auto":"smooth",block:"start"});}});
+    sm.appendChild(c);});
+  var ed=document.getElementById("ed");ed.textContent="";
+  ["Hudson Soares","Guilherme Benevides","Vinicius Alves","Diana Savi"].forEach(function(n){
+    var rowsN=(n==="Diana Savi"?SUP:EXEC).filter(function(r){return r[5]==="done"&&r[3].indexOf(n)>=0;});
+    var sn=rowsN.filter(function(r){return isRec(r);}).length;
+    var p=el("button","pill");p.type="button";p.setAttribute("aria-pressed",fp===n?"true":"false");
+    p.appendChild(document.createTextNode(n.split(" ")[0]+" executou "));p.appendChild(el("b",null,String(rowsN.length)));
+    if(sn)p.appendChild(document.createTextNode(" ("+sn+" recorrentes de Santo Remédio)"));
+    p.addEventListener("click",function(){fp=(fp===n?"":n);render();var t=document.getElementById("sec-1");if(t){var rm=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;t.scrollIntoView({behavior:rm?"auto":"smooth",block:"start"});}});
+    ed.appendChild(p);});
+  if(fp){var lp=el("button","pill clear","Mostrar todos");lp.type="button";lp.addEventListener("click",function(){fp="";render();});ed.appendChild(lp);}
+  document.getElementById("rec").textContent=REC;
+}
+async function init(){
+  ROWS.forEach(function(r){try{var v=localStorage.getItem("fech-14-10-"+r[1]);if(v)motivos[r[1]]=v;}catch(e){}});
+  render();
+  try{
+    db=await claude.use("db");
+    if(db){db.collection("motivos").onSnapshot(function(snap){
+      snap.docs.forEach(function(d){var v=d.data();if(v&&v.v)motivos[d.id]=v.v;});
+      var act=document.activeElement&&document.activeElement.tagName==="SELECT";if(!act)render();
+    },function(){db=null;});}
+  }catch(e){}
+}
+init();
+</script>
