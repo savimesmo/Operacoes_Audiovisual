@@ -69,16 +69,27 @@ NOTA = {"Vinicius": "Pega os VTs semanais esporádicos"}
 CAP_MIN, CAP_MAX = 6, 8
 
 
-def carga():
+def dn(p):
+    d, m = p.split("/")[:2]
+    return int(m) * 31 + int(d)
+
+
+def carga(ref=None):
+    """Capacidade do DIA: só conta job com prazo até o dia de referência. O que é de dias seguintes aparece à parte (later)."""
+    lim = dn(ref or dia.DIA)
     res = []
     for nome, match in TEAM:
-        prod = sum(1 for r in rows if r[0] == 1 and r[5].startswith(match))
-        rsv = sum(1 for k, v in dia.RESERVA.items() if v["p"] == nome)
+        meus = [r for r in rows if r[0] == 1 and r[5].startswith(match)]
+        prod = sum(1 for r in meus if r[6] and dn(r[6]) <= lim)
+        rsv_all = [v for v in dia.RESERVA.values() if v["p"] == nome]
+        rsv = sum(1 for v in rsv_all if not v.get("d") or dn(v["d"]) <= lim)
+        later = (len(meus) - prod) + (len(rsv_all) - rsv)
         tot = prod + rsv
         st = "over" if tot > CAP_MAX else ("ok" if tot >= CAP_MIN else "low")
-        res.append(dict(nome=nome, curto=nome.split(" ")[0], prod=prod, rsv=rsv, tot=tot, st=st, nota=NOTA.get(nome.split(" ")[0], "")))
-    dprod = sum(1 for r in rows if r[0] == 1 and r[5].startswith("Diana"))
-    drsv = sum(1 for v in dia.RESERVA.values() if v["p"] == "Diana")
+        res.append(dict(nome=nome, curto=nome.split(" ")[0], prod=prod, rsv=rsv, later=later, tot=tot, st=st, nota=NOTA.get(nome.split(" ")[0], "")))
+    dm = [r for r in rows if r[0] == 1 and r[5].startswith("Diana")]
+    dprod = sum(1 for r in dm if r[6] and dn(r[6]) <= lim)
+    drsv = sum(1 for v in dia.RESERVA.values() if v["p"] == "Diana" and (not v.get("d") or dn(v["d"]) <= lim))
     return res, dprod, drsv
 
 
@@ -221,7 +232,7 @@ def card_carga(c):
     return (f'<div class="lc {c["st"]}"><div class="n">{esc(c["curto"])}</div>' + (f'<div class="s">{s}</div>' if s else "") +
             (f'<div class="nota">{esc(c["nota"])}</div>' if c["nota"] else "") +
             f'<div class="big">{c["tot"]} <small>de {CAP_MIN} a {CAP_MAX} jobs</small></div>'
-            f'<div class="d">{c["prod"]} em produção · {c["rsv"]} reservados</div></div>')
+            f'<div class="d">{c["prod"]} em produção hoje · {c["rsv"]} reservados hoje' + (f' · {c["later"]} para outros dias, fora da conta' if c["later"] else '') + '</div></div>')
 
 
 linhas_ped = ""
@@ -384,7 +395,8 @@ bloco_aj = "".join(li_aj(i, f, d) for i, f, d in aj_fim) or '<div style="font:13
 quentes = [i for i, f, d in aj_fim if (f[0] + f[1]) > 2]
 aviso_quente = (f'<div style="background:#e11121;color:#fff;border-radius:8px;padding:10px 14px;margin:0 0 14px;font:700 14px Arial,sans-serif">'
                 f'Atenção: {len(quentes)} job(s) com mais de 2 ajustes ou refações, para triagem.</div>') if quentes else ""
-acima = [c for c in cargas if c["st"] == "over"]
+cargas_email, _dp, _dr = carga(dia.PROX)
+acima = [c for c in cargas_email if c["st"] == "over"]
 aviso_cap = (f'<div style="background:#e11121;color:#fff;border-radius:8px;padding:10px 14px;margin:0 0 14px;font:700 14px Arial,sans-serif">'
              f'Acima da capacidade amanhã: {", ".join(c["curto"] for c in acima)}.</div>') if acima else ""
 
@@ -396,10 +408,10 @@ def celula(n, txt, cor="#111"):
 
 linhas_carga = "".join(
     f'<tr><td style="padding:5px 0;font:14px Arial,sans-serif;color:#111"><b>{esc(c["curto"])}</b></td>'
-    f'<td style="font:14px Arial,sans-serif;color:#111">{c["tot"]} jobs <span style="color:#777">({c["prod"]} em produção, {c["rsv"]} reservados)</span></td>'
+    f'<td style="font:14px Arial,sans-serif;color:#111">{c["tot"]} jobs <span style="color:#777">({c["prod"]} em produção, {c["rsv"]} reservados{(", " + str(c["later"]) + " para outros dias") if c["later"] else ""})</span></td>'
     f'<td style="font:600 12px Arial,sans-serif;color:{"#e11121" if c["st"]=="over" else "#555"}">'
     f'{"ACIMA DA CAPACIDADE" if c["st"]=="over" else ("dentro da capacidade" if c["st"]=="ok" else (c["nota"] or "com folga"))}</td></tr>'
-    for c in cargas)
+    for c in cargas_email)
 
 email = f"""<!doctype html><html lang="pt-BR"><body style="margin:0;background:#e9e9e9;padding:18px 0">
 <table align="center" width="640" cellpadding="0" cellspacing="0" style="max-width:640px;width:100%;background:#ffffff;border-radius:14px;overflow:hidden">

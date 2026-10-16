@@ -188,6 +188,9 @@ var GROUPS = {
 };
 var jobs = DATA.map(function(r){return {g:r[0],id:r[1],cli:r[2],ttl:r[3],st:r[4],who:r[5],due:r[6],ped:r[7],old:r[8]};});
 var CAP_MIN=6, CAP_MAX=8;
+var PAUTA_DIA="__DIA__";
+function dnum(p){var a=String(p).split("/");return (+a[1])*31+(+a[0]);}
+function noDia(p){return !!p&&dnum(p)<=dnum(PAUTA_DIA);}
 var TEAM=[{name:"Hudson",match:"Hudson"},{name:"Vinicius",match:"Vinicius",nota:"Pega os VTs semanais esporádicos"},{name:"Guilherme Benevides",match:"Guilherme Benevides"}];
 // etapa de vídeo já atribuída a alguém da equipe, mas travada por etapa anterior (lido no fluxo de cada job no iClips)
 var RESERVA=__RESERVA__;
@@ -345,10 +348,10 @@ function renderLoad(){
   var ld=document.getElementById("load");ld.textContent="";
   var head=el("div","load-h");
   head.appendChild(el("h2",null,"Carga da equipe de vídeo para __DIA__"));
-  head.appendChild(el("span","load-n","Pauta ideal: "+CAP_MIN+" a "+CAP_MAX+" jobs por pessoa. Acima de "+CAP_MAX+" é acima da capacidade."));
+  head.appendChild(el("span","load-n","Capacidade do dia: "+CAP_MIN+" a "+CAP_MAX+" jobs por pessoa. Só conta job com prazo até hoje; o que é de dias seguintes não entra. Acima de "+CAP_MAX+" é acima da capacidade."));
   ld.appendChild(head);
-  var dp=jobs.filter(function(j){return j.g===1&&j.who.indexOf("Diana")===0&&!checks[j.id];}).length;
-  var dr=jobs.filter(function(j){return RESERVA[j.id]&&RESERVA[j.id].p==="Diana"&&!checks[j.id];}).length;
+  var dp=jobs.filter(function(j){return j.g===1&&j.who.indexOf("Diana")===0&&!checks[j.id]&&noDia(j.due);}).length;
+  var dr=jobs.filter(function(j){return RESERVA[j.id]&&RESERVA[j.id].p==="Diana"&&!checks[j.id]&&(!RESERVA[j.id].d||noDia(RESERVA[j.id].d));}).length;
   var sup=el("div","lc sup");
   var st=el("div","lc-t");st.appendChild(el("span","lc-name","Diana"));st.appendChild(el("span","lc-st","Supervisora · fora do cálculo de capacidade"));
   sup.appendChild(st);
@@ -357,8 +360,11 @@ function renderLoad(){
   ld.appendChild(sup);
   var grid=el("div","load-g");
   TEAM.forEach(function(p){
-    var prod=jobs.filter(function(j){return j.g===1&&j.who.indexOf(p.match)===0&&!checks[j.id];}).length;
-    var res=jobs.filter(function(j){return RESERVA[j.id]&&RESERVA[j.id].p===p.name&&!checks[j.id];}).length;
+    var meus=jobs.filter(function(j){return j.g===1&&j.who.indexOf(p.match)===0&&!checks[j.id];});
+    var prod=meus.filter(function(j){return noDia(j.due);}).length;
+    var rs=jobs.filter(function(j){return RESERVA[j.id]&&RESERVA[j.id].p===p.name&&!checks[j.id];});
+    var res=rs.filter(function(j){return !RESERVA[j.id].d||noDia(RESERVA[j.id].d);}).length;
+    var later=(meus.length-prod)+(rs.length-res);
     var tot=prod+res;
     var st=tot>CAP_MAX?"over":(tot>=CAP_MIN?"ok":"low");
     var c=el("div","lc "+st);
@@ -371,7 +377,7 @@ function renderLoad(){
     var m=el("div","meter");
     for(var i=1;i<=Math.max(CAP_MAX+2,tot);i++){var s=el("i",i<=prod?"p":(i<=tot?"r":""));if(i===CAP_MIN||i===CAP_MAX)s.className+=" mk";if(i>CAP_MAX&&i<=tot)s.className+=" ov";m.appendChild(s);}
     c.appendChild(m);
-    c.appendChild(el("div","lc-d",prod+" em produção agora · "+res+" reservado"+(res===1?"":"s")+" atrás de etapa anterior"));
+    c.appendChild(el("div","lc-d",prod+" em produção hoje · "+res+" reservado"+(res===1?"":"s")+" hoje atrás de etapa anterior"+(later?" · "+later+" para outros dias, fora da conta":"")));
     if(st==="over") c.appendChild(el("div","lc-o","Excede em "+(tot-CAP_MAX)+" job"+(tot-CAP_MAX===1?"":"s")+". Redistribuir."));
     grid.appendChild(c);
   });
