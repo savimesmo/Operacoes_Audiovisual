@@ -11,12 +11,15 @@ Saídas em ./saida/:
 import base64, html, json, os, subprocess, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, HERE)
+# PAUTA_DADOS: pasta com dia.py, data.py e report_data.py a usar (padrão: esta pasta).
+# PAUTA_SAIDA: pasta de saída (padrão: ./saida). Servem para refazer o relatório de um dia anterior sem tocar nos arquivos do dia.
+DADOS = os.environ.get("PAUTA_DADOS", HERE)
+sys.path.insert(0, DADOS)
 import dia
 from data import D
 from report_data import EXEC, SUP, RECORRENTES, MOVED, FLAGS, DET
 
-OUT = os.path.join(HERE, "saida")
+OUT = os.environ.get("PAUTA_SAIDA", os.path.join(HERE, "saida"))
 os.makedirs(OUT, exist_ok=True)
 FD = r"D:\Temp\claude\D--Vibecodas-Claude\d7bc8586-2a3a-483a-a1fb-14d6f15fbfb9\scratchpad\artifact-files\e164898b-05e7-4d78-bd2f-f6628b1c9343\project\fonts"
 FD = os.environ.get("FONTES_MONUMENT", os.path.join(HERE, "fontes"))
