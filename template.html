@@ -195,6 +195,8 @@ var TEAM=[{name:"Hudson",match:"Hudson"},{name:"Vinicius",match:"Vinicius",nota:
 // etapa de vídeo já atribuída a alguém da equipe, mas travada por etapa anterior (lido no fluxo de cada job no iClips)
 var RESERVA=__RESERVA__;
 var FLAGS=__FLAGS__, DET=__DET__;
+// Deadline do card no iClips (campo Deadline) e solicitante (account + analista) a quem devolver quando falta ou está vencida
+var DEADLINES=__DEADLINE__;
 var state = {g:0,resp:"",q:"",onlyReq:true,hideDone:false};
 var checks = {};
 var db = null, userId = null, names = {}, dbOk = false;
@@ -276,18 +278,23 @@ function row(j){
   var di=dueInfo(j.due);l1.appendChild(el("span","tag "+di.c,di.t));
   if(j.ped) l1.appendChild(el("span","tag prio","SOLICITADA PRIORIDADE"));
   flagTags(l1,j.id);
+  var dl=DEADLINES[j.id]||{d:"",s:""},dlOld=!!dl.d&&dnum(dl.d.slice(0,5))<dnum(PAUTA_DIA);
+  if(!dl.d) l1.appendChild(el("span","tag prio","SEM DEADLINE"));
+  else if(dlOld) l1.appendChild(el("span","tag mk hot","DEADLINE VENCIDA"));
   b.appendChild(l1);
   if(j.ped){
-    var pr=el("div","req"),pd=PEDIDOS[j.ped]||{n:"",c:""};
-    pr.appendChild(document.createTextNode("Pedido por "));
-    if(pd.t){
-      var wa=el("a","wa",pd.n||fmtTel(pd.t));wa.href="https://wa.me/"+pd.t;wa.target="_blank";wa.rel="noopener";
-      wa.title="Abrir conversa no WhatsApp · "+fmtTel(pd.t);wa.setAttribute("aria-label","Abrir conversa no WhatsApp com "+(pd.n||fmtTel(pd.t)));
-      pr.appendChild(wa);
-    } else if(pd.n) pr.appendChild(el("b",null,pd.n));
-    if(!pd.n&&!pd.t) pr.appendChild(el("b",null,"autor não identificado"));
-    pr.appendChild(document.createTextNode(" · __ANT__ às "+j.ped.split(" ")[1]+" · "+pd.c));
-    b.appendChild(pr);
+    j.ped.split("+").forEach(function(k){
+      var pr=el("div","req"),pd=PEDIDOS[k]||{n:"",c:""};
+      pr.appendChild(document.createTextNode("Pedido por "));
+      if(pd.t){
+        var wa=el("a","wa",pd.n||fmtTel(pd.t));wa.href="https://wa.me/"+pd.t;wa.target="_blank";wa.rel="noopener";
+        wa.title="Abrir conversa no WhatsApp · "+fmtTel(pd.t);wa.setAttribute("aria-label","Abrir conversa no WhatsApp com "+(pd.n||fmtTel(pd.t)));
+        pr.appendChild(wa);
+      } else if(pd.n) pr.appendChild(el("b",null,pd.n));
+      if(!pd.n&&!pd.t) pr.appendChild(el("b",null,"autor não identificado"));
+      pr.appendChild(document.createTextNode(" · "+(pd.d||"__ANT__")+" às "+k.split(" ")[1]+" · "+pd.c));
+      b.appendChild(pr);
+    });
   }
 
   var t=el("p","ttl");var a=el("a",null,j.ttl.replace(/\s*\|\s*/g," | "));a.href=jobUrl(j.id);a.target="_blank";a.rel="noopener";t.appendChild(a);
@@ -299,6 +306,11 @@ function row(j){
   var o=el("a","open","Abrir no iClips");o.href=jobUrl(j.id);o.target="_blank";o.rel="noopener";l3.appendChild(o);
   b.appendChild(l3);
 
+  var dlb=el("div","req");dlb.appendChild(document.createTextNode("Deadline no card: "));
+  dlb.appendChild(el("b",null,dl.d?dl.d.slice(0,5):"não preenchida"));
+  if(!dl.d) dlb.appendChild(document.createTextNode(" · devolver para "+(dl.s||"o solicitante")+" preencher"));
+  else if(dlOld) dlb.appendChild(document.createTextNode(" · já passou e o job segue aberto; "+(dl.s||"o solicitante")+" precisa atualizar"));
+  b.appendChild(dlb);
   var abx=ajBox(j.id);if(abx) b.appendChild(abx);
   if(RESERVA[j.id]){
     var rv=RESERVA[j.id];

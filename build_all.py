@@ -48,7 +48,7 @@ COMUM = {
 t = open(os.path.join(HERE, "template.html"), encoding="utf-8").read()
 t = sub(t, {
     "__F400__": b64("MonumentExtended-Regular.otf"),
-    "__FLAGS__": j(FLAGS), "__DET__": j(DET), "__DATA__": j(rows),
+    "__FLAGS__": j(FLAGS), "__DET__": j(DET), "__DEADLINE__": j(getattr(dia, "DEADLINES", {})), "__DATA__": j(rows),
     "__RESERVA__": j(dia.RESERVA), "__PEDIDOS__": j(dia.PEDIDOS), "__TODAY__": j(dia.TODAY),
 })
 t = sub(t, COMUM)
@@ -113,11 +113,14 @@ def nice(s):
 
 
 def pedido(r):
-    p = dia.PEDIDOS.get(r[7])
-    if not p:
-        return ""
-    quem = p.get("n") or ("+" + p.get("t", ""))
-    return f"{quem}, {dia.ANT} às {r[7].split(' ')[1]}"
+    partes = []
+    for k in r[7].split("+"):
+        p = dia.PEDIDOS.get(k)
+        if not p:
+            continue
+        quem = p.get("n") or ("+" + p.get("t", ""))
+        partes.append(f"{quem}, {p.get('d') or dia.ANT} às {k.split(' ')[1]}")
+    return "; ".join(partes)
 
 
 def ajustes_do(ids):

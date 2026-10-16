@@ -37,6 +37,19 @@ Para cada id citado, consultar o fluxo no iClips: só entra na pauta se tiver et
 ## Tarefas não são jobs (regra da Diana, 16/10/2026)
 O iClips tem **jobs/peças** (ids de 6 dígitos, como 286691) e **tarefas** internas (ids pequenos, como 41891). Tarefas, por exemplo "Estudos IA e Processos", "[DAILY] Gestão & Supervisão" e reuniões, **nunca entram na contagem de jobs**, nem em executados, nem em carga, nem em parciais. Ao ler o relatório de atividades realizadas, descartar tudo o que não for job/peça de cliente.
 
+## Deadline do card e devolução ao solicitante (regra da Diana, 16/10/2026)
+
+- Para cada job da pauta, ler o campo **Deadline** do card no iClips (`DashTrafego/ModalDetalhe`, campo `ProgramacaoDate`) e guardar em `DEADLINES` no `dia.py` (`{id: {"d": "dd/mm/aaaa", "s": "solicitante e analista"}}`). A Pauta mostra "Deadline no card" em cada job.
+- **Toda demanda sem a Deadline preenchida deve ser sinalizada para voltar ao seu solicitante** (tag SEM DEADLINE). O mesmo vale para deadline vencida em job ainda aberto, inclusive job parado: a data precisa ser atualizada sempre, independente de o atraso ser da criação ou não (tag DEADLINE VENCIDA).
+- O solicitante é a account e o analista dela, que ficam nas etapas de aprovação. Quem criou a peça (primeiro evento "inseriu Peça do Projeto" em `Auditoria/Listar`) é só apoio.
+- **Exceção:** se todas as etapas do job já estão concluídas (job encerrado), a falta de deadline é desconsiderada e o job nem entra na pauta.
+- Lista por responsável (formato de texto para WhatsApp): jobs na última etapa ainda aberta (aprovação interna, arquivamento) e/ou com deadline vazia ou vencida, agrupados por pessoa. Os prompts de cada checagem estão em `PROMPTS-CHECAGENS.md`.
+
+## Etapa atual de todos os jobs, a cada checagem
+
+- Em toda checagem, reler o fluxo (`CarregaWorflowJobPeca`) de TODOS os jobs da pauta, não só dos novos. Etapa atual = primeira etapa não concluída (aprovação conta como etapa). Em 16/10 o Rei das Mangueiras (287048) aparecia como "Com o Tráfego" quando já estava em Animação com o Vinicius; outros jobs já tinham passado para aprovação.
+- Job com todas as etapas concluídas sai da pauta.
+
 ## Regras da Pauta do dia
 - Só jobs de vídeo (etapa de edição, animação ou vídeo aberta). Jobs só de arte (embalagem, flâmula, carrossel, card, KV, adesivo, cartela) ficam fora, salvo se tiverem edição de vídeo reservada a um editor.
 - Recorrentes fora da pauta: VTs MAO e BVB adulto e infantil (FDS Fraldas) e VTs Fitness MAO e BVB de 15 e 30 (terça e quarta) do Santo Remédio. Qualquer outro job do cliente é normal. Identificar pelo título.
@@ -109,3 +122,4 @@ O agendador só dispara com o app aberto. Se estiver fechado na hora, a tarefa r
 - Nunca digitar senhas, nunca ler `email_config.json` em voz alta nem colocá-lo em saídas.
 - Reprogramado é inferido do histórico; o motivo "Limite de pauta" é padrão não verificado. Dizer isso quando relevante.
 - Se faltar dado (ponte desligada, sessão expirada), publicar com o que há, registrar o alerta e dizer no e-mail e no resumo.
+
