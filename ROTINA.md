@@ -28,6 +28,12 @@ Documento vivo com o processo completo: https://claude.ai/artifact/BRCS18JMFugf7
 - `feriados.json`: feriados de Manaus (dias off), mantido pela Diana.
 - `estado\AAAA-MM-DD\`: cópia de `dia.py`, `data.py` e `report_data.py` de cada checagem (09h, 14h, 19h). Guardar sempre.
 
+## Onde ler os pedidos de prioridade (regra da Diana, 16/10/2026)
+Pedido de prioridade não vem só do grupo "VGRDA/ JOBS Accounts" e dos dois espaços do Google Chat. Em 16/10 pedidos de vídeo (Move) estavam em "Social + Aprovação criação", "Filtro MOVE/ Vanguarda" e "[VG] Gestão Criação - Interno" e ficaram de fora da pauta. Por isso, em toda checagem, ler **todos os grupos da lista de permissão** do WhatsApp (banco `ponte-whatsapp`, somente leitura), desde o último fechamento (ou desde a checagem anterior), e separar as mensagens que:
+- têm palavras como "prioridade", "prioridades de", "urgente", "urgência", "prioridade máxima", "para amanhã", "hoje ainda", "até as HH", ou
+- trazem links do iClips (`JobPeca/Atividade/NNNNNN`) acompanhados de pedido.
+Para cada id citado, consultar o fluxo no iClips: só entra na pauta se tiver etapa de edição, animação ou vídeo aberta (ou reservada a um editor). Posts estáticos, carrosséis, KVs, cards e artes ficam fora. Mensagens de gestão com etapa e responsável já definidos (como "287040 - Edição - Vinicius") confirmam o editor, mas quem pediu é quem fez o pedido original. Registrar quem pediu, dia, hora e o grupo de origem no `PEDIDOS` do `dia.py` (campo `c` com o nome do grupo). No Google Chat, além dos espaços Tráfego | Mídia Paga e Tráfego | Social Media, conferir os outros espaços de criação que a Diana tiver aberto.
+
 ## Tarefas não são jobs (regra da Diana, 16/10/2026)
 O iClips tem **jobs/peças** (ids de 6 dígitos, como 286691) e **tarefas** internas (ids pequenos, como 41891). Tarefas, por exemplo "Estudos IA e Processos", "[DAILY] Gestão & Supervisão" e reuniões, **nunca entram na contagem de jobs**, nem em executados, nem em carga, nem em parciais. Ao ler o relatório de atividades realizadas, descartar tudo o que não for job/peça de cliente.
 
