@@ -28,6 +28,9 @@ Documento vivo com o processo completo: https://claude.ai/artifact/BRCS18JMFugf7
 - `feriados.json`: feriados de Manaus (dias off), mantido pela Diana.
 - `estado\AAAA-MM-DD\`: cópia de `dia.py`, `data.py` e `report_data.py` de cada checagem (09h, 14h, 19h). Guardar sempre.
 
+## Tarefas não são jobs (regra da Diana, 16/10/2026)
+O iClips tem **jobs/peças** (ids de 6 dígitos, como 286691) e **tarefas** internas (ids pequenos, como 41891). Tarefas, por exemplo "Estudos IA e Processos", "[DAILY] Gestão & Supervisão" e reuniões, **nunca entram na contagem de jobs**, nem em executados, nem em carga, nem em parciais. Ao ler o relatório de atividades realizadas, descartar tudo o que não for job/peça de cliente.
+
 ## Regras da Pauta do dia
 - Só jobs de vídeo (etapa de edição, animação ou vídeo aberta). Jobs só de arte (embalagem, flâmula, carrossel, card, KV, adesivo, cartela) ficam fora, salvo se tiverem edição de vídeo reservada a um editor.
 - Recorrentes fora da pauta: VTs MAO e BVB adulto e infantil (FDS Fraldas) e VTs Fitness MAO e BVB de 15 e 30 (terça e quarta) do Santo Remédio. Qualquer outro job do cliente é normal. Identificar pelo título.

@@ -129,6 +129,7 @@ function execRow(r){
   var li=el("li","row ex"),bd=el("div","bd"),l1=el("div","l1");
   l1.appendChild(el("span","cli",r[1]));
   l1.appendChild(el("span","tag "+(r[5]==="done"?"done":"late"),r[5]==="done"?"Executado":"Parcial"));
+  if(/fora do hor/.test(r[4])) l1.appendChild(el("span","tag mk","Fora do horário"));
   var f=FLAGS[r[0]]||[0,0,1];
   var hot=(f[0]+f[1])>2;
   if(f[0]) l1.appendChild(el("span","tag mk"+(f[0]>2?" hot":""),"Ajuste"+(f[0]>1?" ×"+f[0]:"")));
