@@ -92,18 +92,19 @@ O agendador só dispara com o app aberto. Se estiver fechado na hora, a tarefa r
    3. A Diana autorizou **sobrescrever tudo do dia anterior** (PDFs no Drive, Fechamento publicado, arquivos em `estado\<dia anterior>\19h\`); não precisa guardar versões antigas. O que não pode ser sobrescrito são os arquivos de trabalho de hoje (`dia.py`, `data.py`, `report_data.py` na raiz). Por isso, copiar `estado\<dia anterior>\19h\{dia,data,report_data}.py` para `estado\<dia anterior>\revisao\`, aplicar as correções ali, gerar com `PAUTA_DADOS=<essa pasta> PAUTA_SAIDA=<essa pasta>\saida python build_all.py` (nunca sobrescrever o `dia.py` de hoje). Salvar os PDFs 2 e 3 no Drive por cima dos do dia anterior com `PAUTA_SAIDA=<essa pasta>\saida python salvar_drive.py 2 3` e publicar o Fechamento atualizado (`<pasta>\saida\fechamento.out.html`) no link fixo. Não enviar e-mail por causa da revisão.
    4. Registrar no resumo final o que mudou (quantos jobs passaram de não concluído para concluído, por quem e em que horário).
 1. Ler pedidos de prioridade do dia anterior (WhatsApp via MCP `whatsapp`, só leitura, grupo "VGRDA/ JOBS Accounts"; Google Chat nos dois espaços). Identificar quem pediu. Remetente do WhatsApp: telefone pelo mapa de LID e nome pela agenda sincronizada (tabelas whatsmeow_lid_map e whatsmeow_contacts em `whatsapp-bridge\store\whatsapp.db`, abrir somente leitura).
-2. Ler no iClips os jobs de vídeo em aberto e o fluxo de cada um. Montar `data.py`, `dia.py` (DIA = hoje, ANT = dia anterior, TODAY = hoje, frase nova), reservas e pedidos.
+2. Ler no iClips os jobs de vídeo em aberto e o fluxo de cada um (reler a etapa atual de todos, não só dos novos; job com tudo concluído sai). Ler também a Deadline do card de cada job e quem é o solicitante (seção "Deadline do card"), e preencher `DEADLINES` no `dia.py`. Montar `data.py`, `dia.py` (DIA = hoje, ANT = dia anterior, TODAY = hoje, frase nova), reservas e pedidos.
 3. Jobs com ajuste: ler comentários e briefing, preencher `FLAGS` e `DET`.
 4. `python build_all.py --sem-pdf`, publicar a Pauta no link fixo, copiar os três arquivos para `estado\AAAA-MM-DD\09h\`.
 5. Não enviar e-mail. O PDF "início do dia" precisa refletir 09:00: rodar `python build_all.py` e copiar `saida\1-inicio-do-dia.pdf` para `estado\AAAA-MM-DD\09h\`.
 
 ### 14:00, meio do dia
-1. Reler o iClips (fluxo dos jobs da pauta, relatório de atividades do dia, histórico).
-2. Atualizar `data.py` e `dia.py` (etapas, responsáveis, reservas, `LIDO`), manter a mesma frase do título do dia. Atualizar `report_data.py` com o que já foi executado.
+1. Reler o iClips (fluxo de TODOS os jobs da pauta, relatório de atividades do dia, histórico) e a Deadline do card de cada job (seção "Deadline do card"); incluir jobs novos e retirar os concluídos.
+2. Atualizar `data.py` e `dia.py` (etapas, responsáveis, reservas, `DEADLINES`, `LIDO`), manter a mesma frase do título do dia. Atualizar `report_data.py` com o que já foi executado.
 3. Publicar a Pauta no mesmo link. Copiar o estado para `estado\AAAA-MM-DD\14h\`. Não enviar e-mail.
 
 ### 19:00, fechamento
 1. Reler tudo (iClips completo, relatório de atividades realizadas de editores e Diana para o dia, histórico de cada job reprogramado, comentários e briefing dos jobs com ajuste).
+1b. Reler também a Deadline do card dos jobs que continuam abertos e sinalizar os sem Deadline ou vencidos (seção "Deadline do card").
 2. Reescrever `report_data.py` (EXEC, SUP, MOVED, FLAGS, DET, RECORRENTES), `data.py` e `dia.py` (LIDO, DIA_EXT, PROX = próximo dia útil ou dia seguinte).
 3. `python build_all.py` gera os 3 PDFs, o corpo do e-mail e o assunto em `saida\`.
 4. Publicar o Fechamento e a Pauta nos links fixos.

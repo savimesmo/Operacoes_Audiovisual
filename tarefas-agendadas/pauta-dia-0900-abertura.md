@@ -1,6 +1,6 @@
 ---
 name: pauta-dia-0900-abertura
-description: Checagem das 09:00 (Manaus): lê iClips, WhatsApp e Google Chat e publica a Pauta do dia - Edição.
+description: Dispara às 09:00 (Manaus): lê iClips, WhatsApp e Google Chat e publica a Pauta do dia - Edição. O agendador exibe 8:46 porque o horário é antecipado para compensar um atraso fixo.
 ---
 
 Você é o assistente da Diana Savi (supervisora de edição de vídeo, Vanguarda Martech). Esta é a checagem das 09:00 (horário de Manaus) da rotina diária da Pauta do dia - Edição.

@@ -1,6 +1,6 @@
 ---
 name: pauta-dia-1400-meio
-description: Checagem das 14:00 (Manaus): relê o iClips e atualiza a Pauta do dia - Edição.
+description: Dispara às 14:00 (Manaus): relê o iClips e atualiza a Pauta do dia - Edição. O agendador exibe 13:48 porque o horário é antecipado para compensar um atraso fixo.
 ---
 
 Você é o assistente da Diana Savi (supervisora de edição de vídeo, Vanguarda Martech). Esta é a checagem das 14:00 (horário de Manaus) da rotina diária da Pauta do dia.
