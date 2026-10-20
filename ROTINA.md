@@ -51,6 +51,13 @@ O iClips tem **jobs/peças** (ids de 6 dígitos, como 286691) e **tarefas** inte
 - Job com todas as etapas concluídas sai da pauta.
 - **Regra da Diana (20/10/2026):** job que está na etapa final (por exemplo, aprovação interna antes do encerramento) e não foi fechado no iClips é considerado **completo**. Não conta como pendência nem como "parado" em diagnósticos e relatórios.
 
+## Grupos específicos de job (regra da Diana, 20/10/2026)
+
+- Jobs urgentes têm grupo próprio no WhatsApp (por exemplo "VT tropical urgente - edição"). O trabalho e as decisões acontecem ali, e o iClips só é atualizado depois: etapa fica parada, o responsável do card não é quem está produzindo, play e pause aparecem em lote.
+- Antes de classificar um job como parado, atrasado ou fora do responsável certo, ler o grupo do job (`mcp__whatsapp__list_messages` no chat cujo nome cita o cliente ou o job) e usar o que está lá: quem está produzindo, o que foi pedido e aprovado, e a hora.
+- Na Pauta, o responsável é quem está produzindo de fato (se a Diana refez o job, ele vai para a carga dela, não para a do editor que está no card).
+- Esse grupo também vale como fonte de pedido de prioridade e de ajustes (quem pediu, quando, o quê), sem enviar mensagem.
+
 ## Ajustes e refações: contagem, origem e gravidade (regra da Diana, 20/10/2026)
 
 Objetivo: parar de tratar todo ajuste e toda refação com o mesmo peso no dash e separar o que a operação controla do que não controla.
