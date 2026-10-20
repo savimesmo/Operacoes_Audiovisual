@@ -68,6 +68,11 @@ ul.rows{list-style:none;margin:0;padding:0}
 .tipo.edi{background:var(--ink);color:#0a0a0a;border-color:var(--ink)}
 .tipo.art{border-style:dashed}
 .tipo.brf{background:var(--surface);border-color:var(--ink);border-style:double;border-width:3px}
+.grav{font:600 10px/1 var(--body);letter-spacing:.06em;text-transform:uppercase;border-radius:99px;padding:3px 7px;margin:0 6px 0 8px;border:1px solid var(--line-2);white-space:nowrap;vertical-align:middle}
+.grav.alta{background:var(--red);border-color:var(--red);color:#fff}
+.grav.media{border-color:var(--ink-2);color:var(--ink)}
+.grav.baixa{border-style:dashed;color:var(--mute)}
+.gsum{font:600 11px/1 var(--body);color:var(--ink-2);margin-left:10px}
 .ajl .br{margin-top:2px;font-size:12px;color:var(--mute)}
 .ajl .br b{color:var(--ink-2);font-weight:600}
 .row.ex{grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:start}
@@ -141,7 +146,7 @@ function execRow(r){
   if((f[0]+f[1])>0||f[2]>1){
     var bx=el("div","ajb"+(hot?" hot":""));
     var hd=el("div","ajh");hd.appendChild(el("b",null,(f[0]+f[1])>0?((f[0]+f[1])+" "+((f[0]+f[1])===1?"ajuste ou refação":"ajustes e refações")+(hot?" · acima de 2, triar":"")):"Mais de uma etapa de edição"));bx.appendChild(hd);
-    if(dt&&dt.length){var ul=el("ul","ajl");dt.forEach(function(d){var it=el("li");it.appendChild(el("span","tipo "+d.c,d.tipo));var tx=el("span","txt");tx.appendChild(el("b",null,d.quem));tx.appendChild(document.createTextNode(" · "+d.q+(d.o?": "+d.o:"")));if(d.b){var bb=el("div","br");bb.appendChild(el("b",null,"Briefing: "));bb.appendChild(document.createTextNode(d.b));tx.appendChild(bb);}it.appendChild(tx);ul.appendChild(it);});bx.appendChild(ul);}
+    if(dt&&dt.length){var ul=el("ul","ajl");dt.forEach(function(d){var it=el("li");it.appendChild(el("span","tipo "+d.c,d.tipo));var tx=el("span","txt");tx.appendChild(el("b",null,d.quem));if(d.g)tx.appendChild(el("span","grav "+d.g,d.g==="media"?"média":d.g));tx.appendChild(document.createTextNode(" · "+d.q+(d.o?": "+d.o:"")));if(d.b){var bb=el("div","br");bb.appendChild(el("b",null,"Briefing: "));bb.appendChild(document.createTextNode(d.b));tx.appendChild(bb);}it.appendChild(tx);ul.appendChild(it);});bx.appendChild(ul);}
     else bx.appendChild(el("p","note","Sem comentários registrados no job."));
     bd.appendChild(bx);
   }
@@ -161,7 +166,7 @@ function ajBox(id){
   var hot=n>2,dt=DET[id];
   var bx=el("div","ajb"+(hot?" hot":"")),hd=el("div","ajh");
   hd.appendChild(el("b",null,n>0?(n+" "+(n===1?"ajuste ou refação":"ajustes e refações")+(hot?" · acima de 2, triar":"")):"Mais de uma etapa de edição"));bx.appendChild(hd);
-  if(dt&&dt.length){var ul=el("ul","ajl");dt.forEach(function(d){var it=el("li");it.appendChild(el("span","tipo "+d.c,d.tipo));var tx=el("span","txt");tx.appendChild(el("b",null,d.quem));tx.appendChild(document.createTextNode(" · "+d.q+(d.o?": "+d.o:"")));if(d.b){var bb=el("div","br");bb.appendChild(el("b",null,"Briefing: "));bb.appendChild(document.createTextNode(d.b));tx.appendChild(bb);}it.appendChild(tx);ul.appendChild(it);});bx.appendChild(ul);}
+  if(dt&&dt.length){var ul=el("ul","ajl");dt.forEach(function(d){var it=el("li");it.appendChild(el("span","tipo "+d.c,d.tipo));var tx=el("span","txt");tx.appendChild(el("b",null,d.quem));if(d.g)tx.appendChild(el("span","grav "+d.g,d.g==="media"?"média":d.g));tx.appendChild(document.createTextNode(" · "+d.q+(d.o?": "+d.o:"")));if(d.b){var bb=el("div","br");bb.appendChild(el("b",null,"Briefing: "));bb.appendChild(document.createTextNode(d.b));tx.appendChild(bb);}it.appendChild(tx);ul.appendChild(it);});bx.appendChild(ul);}
   else bx.appendChild(el("p","note","Sem comentários registrados no job."));
   return bx;
 }

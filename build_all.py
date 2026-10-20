@@ -8,7 +8,7 @@ Saídas em ./saida/:
   email.html             Corpo do e-mail
   e os 3 PDFs: 1-inicio-do-dia.pdf, 2-fim-do-dia.pdf, 3-relatorio-do-dia.pdf
 """
-import base64, html, json, os, subprocess, sys
+import base64, html, json, os, re, subprocess, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 # PAUTA_DADOS: pasta com dia.py, data.py e report_data.py a usar (padrão: esta pasta).
@@ -74,19 +74,35 @@ def dn(p):
     return int(m) * 31 + int(d)
 
 
+LEVE_PESO = 0.5  # peso na capacidade do dia de um job em ajuste cujos pedidos são todos de gravidade baixa
+
+
+def leve(r):
+    dt = DET.get(str(r[1]), [])
+    return bool(re.search(r"ajuste|refa", r[4], re.I)) and bool(dt) and all(d.get("g") == "baixa" for d in dt)
+
+
+def peso(r):
+    return LEVE_PESO if leve(r) else 1
+
+
+def num(x):
+    return int(round(x)) if abs(x - round(x)) < 1e-9 else round(x, 1)
+
+
 def carga(ref=None):
     """Capacidade do DIA: só conta job com prazo até o dia de referência. O que é de dias seguintes aparece à parte (later)."""
     lim = dn(ref or dia.DIA)
     res = []
     for nome, match in TEAM:
         meus = [r for r in rows if r[0] == 1 and r[5].startswith(match)]
-        prod = sum(1 for r in meus if r[6] and dn(r[6]) <= lim)
+        prod = sum(peso(r) for r in meus if r[6] and dn(r[6]) <= lim)
         rsv_all = [v for v in dia.RESERVA.values() if v["p"] == nome]
         rsv = sum(1 for v in rsv_all if not v.get("d") or dn(v["d"]) <= lim)
-        later = (len(meus) - prod) + (len(rsv_all) - rsv)
+        later = (sum(peso(r) for r in meus) - prod) + (len(rsv_all) - rsv)
         tot = prod + rsv
         st = "over" if tot > CAP_MAX else ("ok" if tot >= CAP_MIN else "low")
-        res.append(dict(nome=nome, curto=nome.split(" ")[0], prod=prod, rsv=rsv, later=later, tot=tot, st=st, nota=NOTA.get(nome.split(" ")[0], "")))
+        res.append(dict(nome=nome, curto=nome.split(" ")[0], prod=num(prod), rsv=num(rsv), later=num(later), tot=num(tot), st=st, nota=NOTA.get(nome.split(" ")[0], "")))
     dm = [r for r in rows if r[0] == 1 and r[5].startswith("Diana")]
     dprod = sum(1 for r in dm if r[6] and dn(r[6]) <= lim)
     drsv = sum(1 for v in dia.RESERVA.values() if v["p"] == "Diana" and (not v.get("d") or dn(v["d"]) <= lim))
@@ -324,6 +340,24 @@ for r in mv:
     lin_mv += (f'<tr><td><div class="cli">{esc(r[2])}</div><div class="tt">{esc(r[3].replace(" | ", " "))}</div></td>'
                f'<td>{esc("Tráfego" if r[5]=="TRÁFEGO" else r[5])}</td><td style="color:var(--ink-2)">{esc(MOVED[r[1]])}</td></tr>')
 
+def resumo_aj(ids):
+    """Soma de pedidos de ajuste por gravidade e por origem (DET), para o fechamento."""
+    g = {"alta": 0, "media": 0, "baixa": 0, "sem": 0}
+    o = {"edi": 0, "brf": 0, "cli": 0, "out": 0}
+    for i in ids:
+        for d in DET.get(str(i), []):
+            g[d.get("g") if d.get("g") in g else "sem"] += 1
+            o[d.get("c") if d.get("c") in o else "out"] += 1
+    n = sum(g.values())
+    if not n:
+        return ""
+    txt_g = ", ".join(f"{g[k]} {nome}" for k, nome in (("alta", "alta"), ("media", "média"), ("baixa", "baixa")) if g[k])
+    if g["sem"]:
+        txt_g += (", " if txt_g else "") + f"{g['sem']} sem gravidade"
+    txt_o = ", ".join(f"{o[k]} {nome}" for k, nome in (("edi", "erro de edição"), ("brf", "briefing sem as informações"), ("cli", "alteração do cliente"), ("out", "outros")) if o[k])
+    return f"{n} pedidos de ajuste. Gravidade: {txt_g}. Origem: {txt_o}."
+
+
 ids_aj_fim = list(dict.fromkeys([r[0] for r in ALL] + [r[1] for r in mv]))
 titulos_fim = {r[0]: f"{r[1]} · {r[2]}" for r in ALL}
 titulos_fim.update({r[1]: titulo_job(r[1]) for r in mv})
@@ -338,6 +372,7 @@ pdf_fim = f"""<!doctype html><html lang="pt-BR"><meta charset="utf-8"><title>Fim
 <div class="tile"><b>{tot_aj}</b><span>ajustes · {tot_rf} refações</span></div>
 <div class="tile"><b>{len(bl)}</b><span>ainda bloqueados</span></div>
 </div>
+<div class="stamp">{esc(resumo_aj(ids_aj_fim))}</div>
 <h2>Quem executou</h2>
 <div class="cargas">{cards_pess}</div>
 <h2>Ajustes e refações do dia</h2>
@@ -427,7 +462,7 @@ email = f"""<!doctype html><html lang="pt-BR"><body style="margin:0;background:#
 <table width="100%" cellpadding="0" cellspacing="0"><tr>
 {celula(f"{feitos} de {len(ALL)}", "jobs executados")}{celula(len(mv), "reprogramados para " + dia.PROX)}{celula(f"{tot_aj} · {tot_rf}", "ajustes · refações", "#e11121" if quentes else "#111")}{celula(len(bl), "ainda bloqueados")}
 </tr></table></td></tr>
-<tr><td style="padding:10px 26px 0"><div style="font:800 15px Arial,sans-serif;color:#111;margin:10px 0 6px">Ajustes e refações do dia</div>
+<tr><td style="padding:10px 26px 0"><div style="font:800 15px Arial,sans-serif;color:#111;margin:10px 0 6px">Ajustes e refações do dia</div><div style="font:12px Arial,sans-serif;color:#555;margin:0 0 8px">{esc(resumo_aj(ids_aj_fim))}</div>
 <div style="font:13px Arial,sans-serif;color:#555;margin-bottom:8px">Cada pedido foi cruzado com o briefing do job. Se o briefing já indicava, é erro de edição. Se não, é briefing sem as informações solicitadas.</div>
 {bloco_aj}</td></tr>
 <tr><td style="padding:10px 26px 0"><div style="font:800 15px Arial,sans-serif;color:#111;margin:10px 0 6px">Carga da equipe para {dia.PROX}</div>

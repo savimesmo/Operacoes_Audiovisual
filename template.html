@@ -145,6 +145,11 @@ footer{margin-top:48px;color:var(--mute);font-size:13px;max-width:70ch}
 .tipo.edi{background:var(--ink);color:#0a0a0a;border-color:var(--ink)}
 .tipo.art{border-style:dashed}
 .tipo.brf{background:var(--surface);border-color:var(--ink);border-style:double;border-width:3px}
+.grav{font:600 10px/1 var(--body);letter-spacing:.06em;text-transform:uppercase;border-radius:99px;padding:3px 7px;margin:0 6px 0 8px;border:1px solid var(--line-2);white-space:nowrap;vertical-align:middle}
+.grav.alta{background:var(--red);border-color:var(--red);color:#fff}
+.grav.media{border-color:var(--ink-2);color:var(--ink)}
+.grav.baixa{border-style:dashed;color:var(--mute)}
+.gsum{font:600 11px/1 var(--body);color:var(--ink-2);margin-left:10px}
 .ajl .br{margin-top:2px;font-size:12px;color:var(--mute)}
 .ajl .br b{color:var(--ink-2);font-weight:600}
 .note{margin:0;font-size:13px;color:var(--mute)}
@@ -187,7 +192,11 @@ var GROUPS = {
   5:{t:"Com o Tráfego, em outra etapa",d:"Ainda sem responsável na etapa atual. O Tráfego precisa distribuir."}
 };
 var jobs = DATA.map(function(r){return {g:r[0],id:r[1],cli:r[2],ttl:r[3],st:r[4],who:r[5],due:r[6],ped:r[7],old:r[8]};});
-var CAP_MIN=6, CAP_MAX=8;
+var CAP_MIN=6, CAP_MAX=8, LEVE_PESO=0.5;
+function leve(j){var dt=DET[j.id];return /ajuste|refa/i.test(j.st||"")&&!!dt&&dt.length>0&&dt.every(function(d){return d.g==="baixa";});}
+function wt(j){return leve(j)?LEVE_PESO:1;}
+function soma(a){return a.reduce(function(s,j){return s+wt(j);},0);}
+function fmt(n){return String(Math.round(n*10)/10).replace(".",",");}
 var PAUTA_DIA="__DIA__";
 function dnum(p){var a=String(p).split("/");return (+a[1])*31+(+a[0]);}
 function noDia(p){return !!p&&dnum(p)<=dnum(PAUTA_DIA);}
@@ -258,8 +267,8 @@ function ajBox(id){
   if(!(n>0||f[2]>1)) return null;
   var hot=n>2,dt=DET[id];
   var bx=el("div","ajb"+(hot?" hot":"")),hd=el("div","ajh");
-  hd.appendChild(el("b",null,n>0?(n+" "+(n===1?"ajuste ou refação":"ajustes e refações")+(hot?" · acima de 2, triar":"")):"Mais de uma etapa de edição"));bx.appendChild(hd);
-  if(dt&&dt.length){var ul=el("ul","ajl");dt.forEach(function(d){var it=el("li");it.appendChild(el("span","tipo "+d.c,d.tipo));var tx=el("span","txt");tx.appendChild(el("b",null,d.quem));tx.appendChild(document.createTextNode(" · "+d.q+(d.o?": "+d.o:"")));if(d.b){var bb=el("div","br");bb.appendChild(el("b",null,"Briefing: "));bb.appendChild(document.createTextNode(d.b));tx.appendChild(bb);}it.appendChild(tx);ul.appendChild(it);});bx.appendChild(ul);}
+  hd.appendChild(el("b",null,n>0?(n+" "+(n===1?"ajuste ou refação":"ajustes e refações")+(hot?" · acima de 2, triar":"")):"Mais de uma etapa de edição"));var gc={};(dt||[]).forEach(function(d){if(d.g)gc[d.g]=(gc[d.g]||0)+1;});var gs=["alta","media","baixa"].filter(function(k){return gc[k];}).map(function(k){return gc[k]+" "+(k==="media"?"média":k);}).join(", ");if(gs)hd.appendChild(el("span","gsum","gravidade: "+gs));bx.appendChild(hd);
+  if(dt&&dt.length){var ul=el("ul","ajl");dt.forEach(function(d){var it=el("li");it.appendChild(el("span","tipo "+d.c,d.tipo));var tx=el("span","txt");tx.appendChild(el("b",null,d.quem));if(d.g)tx.appendChild(el("span","grav "+d.g,d.g==="media"?"média":d.g));tx.appendChild(document.createTextNode(" · "+d.q+(d.o?": "+d.o:"")));if(d.b){var bb=el("div","br");bb.appendChild(el("b",null,"Briefing: "));bb.appendChild(document.createTextNode(d.b));tx.appendChild(bb);}it.appendChild(tx);ul.appendChild(it);});bx.appendChild(ul);}
   else bx.appendChild(el("p","note","Sem comentários registrados no job."));
   return bx;
 }
@@ -360,7 +369,7 @@ function renderLoad(){
   var ld=document.getElementById("load");ld.textContent="";
   var head=el("div","load-h");
   head.appendChild(el("h2",null,"Carga da equipe de vídeo para __DIA__"));
-  head.appendChild(el("span","load-n","Capacidade do dia: "+CAP_MIN+" a "+CAP_MAX+" jobs por pessoa. Só conta job com prazo até hoje; o que é de dias seguintes não entra. Acima de "+CAP_MAX+" é acima da capacidade."));
+  head.appendChild(el("span","load-n","Capacidade do dia: "+CAP_MIN+" a "+CAP_MAX+" jobs por pessoa. Só conta job com prazo até hoje; o que é de dias seguintes não entra. Ajuste leve (todos os pedidos de gravidade baixa) conta "+fmt(LEVE_PESO)+". Acima de "+CAP_MAX+" é acima da capacidade."));
   ld.appendChild(head);
   var dp=jobs.filter(function(j){return j.g===1&&j.who.indexOf("Diana")===0&&!checks[j.id]&&noDia(j.due);}).length;
   var dr=jobs.filter(function(j){return RESERVA[j.id]&&RESERVA[j.id].p==="Diana"&&!checks[j.id]&&(!RESERVA[j.id].d||noDia(RESERVA[j.id].d));}).length;
@@ -373,10 +382,10 @@ function renderLoad(){
   var grid=el("div","load-g");
   TEAM.forEach(function(p){
     var meus=jobs.filter(function(j){return j.g===1&&j.who.indexOf(p.match)===0&&!checks[j.id];});
-    var prod=meus.filter(function(j){return noDia(j.due);}).length;
+    var prod=soma(meus.filter(function(j){return noDia(j.due);}));
     var rs=jobs.filter(function(j){return RESERVA[j.id]&&RESERVA[j.id].p===p.name&&!checks[j.id];});
-    var res=rs.filter(function(j){return !RESERVA[j.id].d||noDia(RESERVA[j.id].d);}).length;
-    var later=(meus.length-prod)+(rs.length-res);
+    var res=soma(rs.filter(function(j){return !RESERVA[j.id].d||noDia(RESERVA[j.id].d);}));
+    var later=(soma(meus)-prod)+(soma(rs)-res);
     var tot=prod+res;
     var st=tot>CAP_MAX?"over":(tot>=CAP_MIN?"ok":"low");
     var c=el("div","lc "+st);
@@ -384,13 +393,13 @@ function renderLoad(){
     var stTxt=st==="over"?"ACIMA DA CAPACIDADE":(st==="ok"?"Dentro da capacidade":(p.nota?"":"Com folga"));if(stTxt)top.appendChild(el("span","lc-st",stTxt));
     if(p.nota)top.appendChild(el("span","lc-nota",p.nota));
     c.appendChild(top);
-    var big=el("div","lc-b");big.appendChild(el("b",null,String(tot)));big.appendChild(el("small",null," de "+CAP_MIN+" a "+CAP_MAX+" jobs"));
+    var big=el("div","lc-b");big.appendChild(el("b",null,fmt(tot)));big.appendChild(el("small",null," de "+CAP_MIN+" a "+CAP_MAX+" jobs"));
     c.appendChild(big);
     var m=el("div","meter");
-    for(var i=1;i<=Math.max(CAP_MAX+2,tot);i++){var s=el("i",i<=prod?"p":(i<=tot?"r":""));if(i===CAP_MIN||i===CAP_MAX)s.className+=" mk";if(i>CAP_MAX&&i<=tot)s.className+=" ov";m.appendChild(s);}
+    for(var i=1;i<=Math.max(CAP_MAX+2,Math.ceil(tot));i++){var s=el("i",i<=Math.ceil(prod)?"p":(i<=Math.ceil(tot)?"r":""));if(i===CAP_MIN||i===CAP_MAX)s.className+=" mk";if(i>CAP_MAX&&i<=Math.ceil(tot))s.className+=" ov";m.appendChild(s);}
     c.appendChild(m);
-    c.appendChild(el("div","lc-d",prod+" em produção hoje · "+res+" reservado"+(res===1?"":"s")+" hoje atrás de etapa anterior"+(later?" · "+later+" para outros dias, fora da conta":"")));
-    if(st==="over") c.appendChild(el("div","lc-o","Excede em "+(tot-CAP_MAX)+" job"+(tot-CAP_MAX===1?"":"s")+". Redistribuir."));
+    c.appendChild(el("div","lc-d",fmt(prod)+" em produção hoje · "+fmt(res)+" reservado"+(res===1?"":"s")+" hoje atrás de etapa anterior"+(later?" · "+fmt(later)+" para outros dias, fora da conta":"")));
+    if(st==="over") c.appendChild(el("div","lc-o","Excede em "+fmt(tot-CAP_MAX)+" job"+(tot-CAP_MAX===1?"":"s")+". Redistribuir."));
     grid.appendChild(c);
   });
   ld.appendChild(grid);

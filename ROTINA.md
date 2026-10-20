@@ -51,6 +51,23 @@ O iClips tem **jobs/peças** (ids de 6 dígitos, como 286691) e **tarefas** inte
 - Job com todas as etapas concluídas sai da pauta.
 - **Regra da Diana (20/10/2026):** job que está na etapa final (por exemplo, aprovação interna antes do encerramento) e não foi fechado no iClips é considerado **completo**. Não conta como pendência nem como "parado" em diagnósticos e relatórios.
 
+## Ajustes e refações: contagem, origem e gravidade (regra da Diana, 20/10/2026)
+
+Objetivo: parar de tratar todo ajuste e toda refação com o mesmo peso no dash e separar o que a operação controla do que não controla.
+
+1. **Contagem real.** Um pedido de ajuste é o evento "Solicitou alteração da peça" no histórico do job (`Auditoria/RetornaAlteracao`, id do evento vindo de `Auditoria/Listar`), mais comentários de ajuste sem esse evento. Reagendamento de data, troca de responsável e conclusão de etapa **não** contam (em 20/10 eles inflavam a contagem de 5 a 10 vezes). `FLAGS` do job = [ajustes, refações, etapas de edição] contados assim.
+2. **Origem** (campo `c` e `tipo` em `DET`, já existente): `edi` erro de edição (o briefing já indicava), `brf` briefing sem as informações (falha de comunicação do analista ou da account), `cli` alteração do cliente, `art` outros.
+3. **Gravidade** (novo campo `g` em cada item de `DET`: `"alta"`, `"media"` ou `"baixa"`). Régua:
+   - `baixa`: corrige em minutos e é dado errado ou faltando (valor, "R$", QR code, nome do produto, selo de mês, texto de cartela, legenda, volume).
+   - `media`: muda layout, formato ou vários elementos, mas a peça se mantém (fundo, grid, posição do selo, trocar produto, logo, áudio, vários itens de uma vez).
+   - `alta`: refazer a peça ou mudar a direção (arte fora da identidade visual, trocar KV, mudar conceito depois de aprovado, refação por briefing errado).
+   Na dúvida entre duas, usar a mais alta e escrever a razão em `o`. Amostra e régua devem ser validadas pela Diana; mudanças na régua ficam registradas aqui.
+4. **Peso na capacidade do dia.** Job em ajuste ou refação em que **todos** os pedidos são de gravidade baixa conta `LEVE_PESO = 0,5` job na carga do editor (constante em `template.html` e `build_all.py`). Os outros contam 1. O peso aparece no texto da carga.
+5. **O que aparece nos entregáveis.** Pauta e Fechamento mostram o chip de gravidade ao lado de cada pedido e o resumo "gravidade: x alta, y média, z baixa" no cabeçalho do bloco de ajustes. O PDF fim do dia e o e-mail mostram a linha "N pedidos de ajuste. Gravidade: … Origem: …".
+6. **Reincidência.** Job com 3 ou mais pedidos de ajuste (já sinalizado em vermelho) entra na lista de reincidência do relatório semanal, com a conta, a origem predominante e quem pediu.
+7. **Relatório semanal por solicitante (sexta, junto da checagem das 19:00).** Rodar `python semanal.py`: lê `estado/<dia>/19h/report_data.py` da semana e gera `saida/relatorio-semanal.md` e `saida/relatorio-semanal.html` com: pedidos por origem e por gravidade, por conta e por solicitante (account e analista), com os links dos jobs, e a lista de reincidência. Guardar em `estado/AAAA-MM-DD/19h/` e salvar no Drive junto dos outros arquivos do dia. Não enviar por e-mail sem a Diana pedir.
+8. **Tratativa.** O relatório é a base para a conversa com account, analista e liderança; a resposta depende de quem recebe. Registrar no resumo da checagem os itens enviados e a data, para a Diana acompanhar o retorno.
+
 ## Regras da Pauta do dia
 - Só jobs de vídeo (etapa de edição, animação ou vídeo aberta). Jobs só de arte (embalagem, flâmula, carrossel, card, KV, adesivo, cartela) ficam fora, salvo se tiverem edição de vídeo reservada a um editor.
 - Recorrentes fora da pauta: VTs MAO e BVB adulto e infantil (FDS Fraldas) e VTs Fitness MAO e BVB de 15 e 30 (terça e quarta) do Santo Remédio. Qualquer outro job do cliente é normal. Identificar pelo título.
