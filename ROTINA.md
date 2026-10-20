@@ -49,6 +49,7 @@ O iClips tem **jobs/peças** (ids de 6 dígitos, como 286691) e **tarefas** inte
 
 - Em toda checagem, reler o fluxo (`CarregaWorflowJobPeca`) de TODOS os jobs da pauta, não só dos novos. Etapa atual = primeira etapa não concluída (aprovação conta como etapa). Em 16/10 o Rei das Mangueiras (287048) aparecia como "Com o Tráfego" quando já estava em Animação com o Vinicius; outros jobs já tinham passado para aprovação.
 - Job com todas as etapas concluídas sai da pauta.
+- **Regra da Diana (20/10/2026):** job que está na etapa final (por exemplo, aprovação interna antes do encerramento) e não foi fechado no iClips é considerado **completo**. Não conta como pendência nem como "parado" em diagnósticos e relatórios.
 
 ## Regras da Pauta do dia
 - Só jobs de vídeo (etapa de edição, animação ou vídeo aberta). Jobs só de arte (embalagem, flâmula, carrossel, card, KV, adesivo, cartela) ficam fora, salvo se tiverem edição de vídeo reservada a um editor.
