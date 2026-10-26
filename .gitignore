@@ -18,3 +18,4 @@ ponte-whatsapp/**/names.json
 *.log
 __pycache__/
 *.pyc
+trafego/
