@@ -24,3 +24,8 @@ Título com frase nova por dia; pedido com quem, dia, hora e grupo; etapas atuai
 
 ## Limites da primeira leitura (26/10)
 Google Chat e grupos específicos de job não foram lidos; etapas desatualizadas ("old") não preenchidas; briefing não cruzado; só jobs com etapa de produção ou ajuste entram, então planejamento, mídia e publicação ficam fora.
+
+## Google Chat (leitura dos pedidos de prioridade)
+- Abrir https://chat.google.com no navegador integrado (sessão da Diana), localizar os espaços "Tráfego | Mídia Paga", "Tráfego | Social Media" e "Tráfego - Vanguarda" com `find`, clicar e ler `document.body.innerText`.
+- Só espaços; mensagens diretas não são lidas. Pedido novo de prioridade entra como `Chat HH:MM` em PEDIDOS, como o WhatsApp.
+- Link fixo do artefato: https://claude.ai/artifact/PtkWPSjnq8PUrmY1e9oVWv (publicar sempre nele).
