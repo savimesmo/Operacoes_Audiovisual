@@ -29,3 +29,6 @@ Google Chat e grupos específicos de job não foram lidos; etapas desatualizadas
 - Abrir https://chat.google.com no navegador integrado (sessão da Diana), localizar os espaços "Tráfego | Mídia Paga", "Tráfego | Social Media" e "Tráfego - Vanguarda" com `find`, clicar e ler `document.body.innerText`.
 - Só espaços; mensagens diretas não são lidas. Pedido novo de prioridade entra como `Chat HH:MM` em PEDIDOS, como o WhatsApp.
 - Link fixo do artefato: https://claude.ai/artifact/PtkWPSjnq8PUrmY1e9oVWv (publicar sempre nele).
+
+## Rótulo de origem
+Na pauta do Tráfego o erro da própria produção (arte, texto ou edição) aparece como "Erro de execução", não "Erro de edição". O código interno continua `edi`. A pauta da Edição mantém "Erro de edição".
